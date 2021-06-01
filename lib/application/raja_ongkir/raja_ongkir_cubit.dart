@@ -1,4 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:cekongkir/domain/raja_ongkir/city/city.dart';
+import 'package:cekongkir/domain/raja_ongkir/cost/cost_request.dart';
+import 'package:cekongkir/domain/raja_ongkir/cost/cost_response.dart';
 import 'package:cekongkir/domain/raja_ongkir/province/province.dart';
 import 'package:cekongkir/domain/raja_ongkir/raja_ongkir_failed.dart';
 import 'package:cekongkir/domain/raja_ongkir/raja_ongkir_repository.dart';
@@ -21,6 +24,34 @@ class RajaOngkirCubit extends Cubit<RajaOngkirState> {
 
       result.fold((l) => emit(RajaOngkirState.error(l)),
           (r) => emit(RajaOngkirState.onGetProvinceData(r)));
+    } catch (e) {
+      emit(RajaOngkirState.error(
+          RajaOngkirFailed().copyWith(description: e.toString())));
+    }
+  }
+
+  void getCity(String provinceId) async {
+    emit(RajaOngkirState.loading());
+
+    try {
+      final result = await _iRajaOngkir.getCity(provinceId);
+
+      result.fold((l) => emit(RajaOngkirState.error(l)),
+          (r) => emit(RajaOngkirState.onGetCityData(r)));
+    } catch (e) {
+      emit(RajaOngkirState.error(
+          RajaOngkirFailed().copyWith(description: e.toString())));
+    }
+  }
+
+  void getCost(CostRequest request) async {
+    emit(RajaOngkirState.loading());
+
+    try {
+      final result = await _iRajaOngkir.getCost(request);
+
+      result.fold((l) => emit(RajaOngkirState.error(l)),
+          (r) => emit(RajaOngkirState.onGetCostData(r)));
     } catch (e) {
       emit(RajaOngkirState.error(
           RajaOngkirFailed().copyWith(description: e.toString())));
